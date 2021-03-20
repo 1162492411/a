@@ -6,10 +6,20 @@
 <span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.zyg-tech.me/categories/java itemprop=url rel=index><span itemprop=name>Java</span></a>
 &nbsp;</span></span>
 <span>&nbsp; | &nbsp;
-<span class=post-meta-item-icon><i class="fa fa-eye"></i></span><span class=post-meta-item-text></span><span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=基础篇>基础篇</h1><h2 id=object都有哪些方法各自作用是什么>Object都有哪些方法，各自作用是什么</h2><span class=spoiler>对象相等的相关方法：equals()、hashcode();
+<span class=post-meta-item-icon><i class="fa fa-eye"></i></span><span class=post-meta-item-text></span><span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=基础篇>基础篇</h1><h2 id=object都有哪些方法各自作用是什么>Object都有哪些方法，各自作用是什么</h2><span class=spoiler>对象相等的相关方法：equals()、hashcode();
 对象的基本方法 ： toString()、getClass()、clone()、finalize()
 锁相关方法 : wait()、nofity()、notifyAll()</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=java有哪些修饰符作用域>Java有哪些修饰符/作用域</h2><span class=spoiler>private、default、protected、public</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=数据结构篇>数据结构篇</h1><h2 id=hashcode为什么采用31作为乘数>HashCode为什么采用31作为乘数</h2><span class=spoiler>1. 31 是一个奇质数，如果选择偶数会导致乘积运算时数据溢出
-2. 使用 31、33、37、39 和 41 作为乘积，得到的碰撞几率较小</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=hashmap底层实现>HashMap底层实现</h2><span class=spoiler>1.7及以前是数组+链表，1.8以后是数组+链表+红黑树</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=hashmap的put如何实现>HashMap的put如何实现</h2><span class=spoiler>1.对key的hashCode()做hash，然后再计算index;
+2. 使用 31、33、37、39 和 41 作为乘积，得到的碰撞几率较小</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=hashmap底层实现>HashMap底层实现</h2><span class=spoiler>1.7及以前是数组+链表，1.8以后是数组+链表+红黑树</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=为什么hashmap初始化时采用数组链表而不是红黑树>为什么HashMap初始化时采用数组+链表而不是红黑树</h2><span class=spoiler>* 时空平衡 ：数组+链表时间复杂度小,为O(1),插入方便，并且单个节点内存小；红黑树时间复杂度高,为O(n)，插入复杂，它需要通过旋转来平衡，并且单个节点内存大
+* 数据分布 : 当hashCode算法足够好时，数据会尽量均匀分布，几乎不会出现单个链表元素数量超过8的情况；当hashCode算法不好时，本身hashmap做了一次hash扰动了，并且足够理想的情况下，随机数据分散程度遵循泊松分布，几率为0.0000006，也几乎不会出现单个链表元素数量超过8的情况
+## HashMap在1.8中为什么相比1.7增加了红黑树
+<span class=spoiler>防止恶意的hashcode导致数据分布不均匀，在某些链表中元素过多导致查询效率变低</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## HashMap在什么情况下会出现数组+链表 <-->红黑树 的相互转换，为什么
+<span class=spoiler>* 链表长度为8时转换为红黑树
+* 红黑树元素数量为6时转换为数组+链表
+* 原因 ： 理想情况下随机hashCode算法下所有bin中节点的分布频率会遵循泊松分布，为6的概率为十万分之一，为7的概率为十万分之一的百分之七，为8的概率为十万分之一的万分之四。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 链表和红黑树是否可能共存在同一个HashMap
+<span class=spoiler>是的，数组+链表/数组+红黑树，各个数组间互相不影响</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## HashMap的默认初始大小为什么是16，扩容阈值为什么是0.75
+<span class=spoiler>* 初始化大小为16 ： 分配过小容易扩容，分配过大浪费资源
+* 扩容阈值为0.75 ： 经验所得</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## HashMap的put如何实现
+<span class=spoiler>1.对key的hashCode()做hash，然后再计算index;
 2.校验桶数组是否被初始化 ： 如果未被初始化则进行初始化
 3.校验某个桶中是否为空 : 如果为空，将本次待插入的数据放入该桶;如果桶非空
 3.1 如果目前是红黑树,调用红黑树的插入方法，并将插入后的数据赋值给临时变量e
@@ -17,10 +27,24 @@
 3.3 其他情况下遍历整个链表,查找待插入数据是否已存在于该Map，如果存在则赋值给临时变量e，如果不存在也将待插入的数据赋值给临时变量e
 3.4 上边三步进行完之后，如果临时变量e非空，将Map中指定位置的值替换为本次待插入的数据，同时执行afterNodeAccess扩展方法
 4.键值对数量超过阈值时，则进行扩容
-5.执行afterNodeInsertion扩展方法</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=hashmap扩容策略在17和18有什么区别>HashMap扩容策略在1.7和1.8有什么区别</h2><span class=spoiler>* 数据插入与扩容顺序 ： 1.7先扩容再插入数据，1.8先插入数据再扩容
+5.执行afterNodeInsertion扩展方法</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## HashMap的插入方式在1.7和1.8有什么区别
+<span class=spoiler>1.7头插法并且会使得链表反转，1.8尾插法</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## HashMap扩容策略在1.7和1.8有什么区别
+<span class=spoiler>* 数据插入与扩容顺序 ： 1.7先扩容再插入数据，1.8先插入数据再扩容
 * 插入方法 ： 1.7头插法，1.8尾插法
-* 数据移动 ： 1.7重新计算rehash，1.8要么数据保留在原位要么固定向后移动n位(n指扩容前的hashmap大小)</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=hashmap是否是线程安全的扩容时的锁在什么情况下会出现>HashMap是否是线程安全的，扩容时的锁在什么情况下会出现</h2><span class=spoiler>不安全。多线程put导致扩容时会形成环形结构从而导致死循环</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=如何实现线程安全的hashmap>如何实现线程安全的HashMap</h2><span class=spoiler>* 操作时采用 Synchronized
-* 改用ConcurrentHashMap</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=io篇>IO篇</h1><h2 id=unix-系统有哪些常见的io模型>UNIX 系统有哪些常见的IO模型</h2><span class=spoiler>UNIX 系统下， IO 模型一共有 5 种： **同步阻塞 I/O**、**同步非阻塞 I/O**、**I/O 多路复用**、**信号驱动 I/O** 和**异步 I/O**</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=java中有哪些io模型>Java中有哪些IO模型</h2><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=线程篇>线程篇</h1><h2 id=线程---线程和进程的区别>线程 - 线程和进程的区别</h2><span class=spoiler>进程是资源分配的最小单位，线程是CPU调度的最小单位</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---进程和线程中各自存储什么内容>线程 - 进程和线程中各自存储什么内容</h2><span class=spoiler>| 进程 | 线程 |
+* 数据移动 ： 1.7重新计算rehash，1.8要么数据保留在原位要么固定向后移动n位(n指扩容前的hashmap大小)</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## HashMap是否是线程安全的，扩容时的锁在什么情况下会出现
+<span class=spoiler>* 不安全，导致不安全的情况包括以下几种
+* 多线程put导致扩容时会形成环形结构从而导致死循环
+* modCount的修改不是原子性的
+* 扩容时由于插入数据导致判断的值不一定准确
+* 锁 占位</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 如何实现线程安全的HashMap
+<span class=spoiler>* 操作时采用 Synchronized
+* 改用ConcurrentHashMap</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># IO篇
+## UNIX 系统有哪些常见的IO模型
+<span class=spoiler>UNIX 系统下， IO 模型一共有 5 种： **同步阻塞 I/O**、**同步非阻塞 I/O**、**I/O 多路复用**、**信号驱动 I/O** 和**异步 I/O**</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## Java中有哪些IO模型
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 线程篇
+## 线程 - 线程和进程的区别
+<span class=spoiler>进程是资源分配的最小单位，线程是CPU调度的最小单位</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - 进程和线程中各自存储什么内容
+<span class=spoiler>| 进程 | 线程 |
 | ------------------ | ---------- |
 | 地址空间 | 程序计数器 |
 | 全局变量 | 寄存器 |
@@ -29,7 +53,10 @@
 | 即将发生的报警 | |
 | 信号与信号处理程序 | |
 | 账户信号 | |
-| 同步、互斥信号量 | |</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---线程有哪几种状态>线程 - 线程有哪几种状态</h2><p><img src=https://gitee.com/1162492411/pic/raw/master/java-%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E5%9B%BE.jpeg alt=java-线程状态图></p><h2 id=线程---线程的实现方式有哪些这些方式之间有什么区别>线程 - 线程的实现方式有哪些，这些方式之间有什么区别</h2><span class=spoiler>* 继承Thread类、实现Runnable接口、实现Callback接口
+| 同步、互斥信号量 | |</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - 线程有哪几种状态
+![java-线程状态图](https://gitee.com/1162492411/pic/raw/master/java-线程状态图.jpeg)
+## 线程 - 线程的实现方式有哪些，这些方式之间有什么区别
+<span class=spoiler>* 继承Thread类、实现Runnable接口、实现Callback接口
 * 实现Runnable/Callable接口相比继承Thread类的优势
 * 适合多个线程进行资源共享
 * 可以避免java中单继承的限制
@@ -39,31 +66,55 @@
 * call()方法执行后可以有返回值，run()方法没有返回值
 * Callable重写的是call()方法，Runnable重写的方法是run()方法
 * call()方法可以抛出异常，run()方法不可以
-* 运行Callable任务可以拿到一个Future对象，表示异步计算的结果 。通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---thread类包含start和run方法它们的区别是什么>线程 - Thread类包含start()和run()方法，它们的区别是什么</h2><span class=spoiler>start() : 它的作用是启动一个新线程，新线程会执行相应的run()方法。start()不能被重复调用。
-run() : run()就和普通的成员方法一样，可以被重复调用。单独调用run()的话，会在当前线程中执行run()，而并不会启动新线程</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---为什么notify-wait等函数定义在object中而不是thread中>线程 - 为什么notify(), wait()等函数定义在Object中，而不是Thread中</h2><span class=spoiler>notify(), wait()依赖于“同步锁”，而“同步锁”是对象锁持有，并且每个对象有且仅有一个</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---sleep-与-wait的比较>线程 - sleep() 与 wait()的比较</h2><span class=spoiler>wait()的作用是让当前线程由“运行状态”进入“等待(阻塞)状态”的同时，也会释放同步锁。
+* 运行Callable任务可以拿到一个Future对象，表示异步计算的结果 。通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - Thread类包含start()和run()方法，它们的区别是什么
+<span class=spoiler>start() : 它的作用是启动一个新线程，新线程会执行相应的run()方法。start()不能被重复调用。
+run() : run()就和普通的成员方法一样，可以被重复调用。单独调用run()的话，会在当前线程中执行run()，而并不会启动新线程</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - 为什么notify(), wait()等函数定义在Object中，而不是Thread中
+<span class=spoiler>notify(), wait()依赖于“同步锁”，而“同步锁”是对象锁持有，并且每个对象有且仅有一个</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - sleep() 与 wait()的比较
+<span class=spoiler>wait()的作用是让当前线程由“运行状态”进入“等待(阻塞)状态”的同时，也会释放同步锁。
 而sleep()的作用是也是让当前线程由“运行状态”进入到“休眠(阻塞)状态”。
-但是，wait()会释放对象的同步锁，而sleep()则不会释放锁</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---join方法的作用和原理>线程 - join()方法的作用和原理</h2><span class=spoiler>作用是让“主线程”等待“子线程”结束之后才能继续运行，原理就是对应的native方法中先是主线程调用了wait然后在子线程threadA执行完毕之后，JVM会调用lock.notify_all(thread)来唤醒就是主线程</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---nofity和nofityall的区别>线程 - nofity和nofityAll的区别</h2><span class=spoiler>notify()方法只随机唤醒一个 wait 线程，而notifyAll()方法唤醒所有 wait 线程</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程---如何实现线程安全各个实现方法有什么区别>线程 - 如何实现线程安全，各个实现方法有什么区别</h2><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=怎么唤醒一个阻塞的线程>怎么唤醒一个阻塞的线程</h2><span class=spoiler>* wait()、notify() ：在synchronized中调用wait来释放当前线程的锁，然后调用notify来随机唤醒其他线程
+但是，wait()会释放对象的同步锁，而sleep()则不会释放锁</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - join()方法的作用和原理
+<span class=spoiler>作用是让“主线程”等待“子线程”结束之后才能继续运行，原理就是对应的native方法中先是主线程调用了wait然后在子线程threadA执行完毕之后，JVM会调用lock.notify_all(thread)来唤醒就是主线程</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - nofity和nofityAll的区别
+<span class=spoiler>notify()方法只随机唤醒一个 wait 线程，而notifyAll()方法唤醒所有 wait 线程</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - 如何实现线程安全，各个实现方法有什么区别
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 怎么唤醒一个阻塞的线程
+<span class=spoiler>* wait()、notify() ：在synchronized中调用wait来释放当前线程的锁，然后调用notify来随机唤醒其他线程
 * await()、signal() ： 使用Condition对象提供的await()来释放当前线程的锁，然后调用signal()来随机唤醒其他线程
-* park()、unpark() : 使用LockSupport提供的park获取许可证(如果许可证的状态是未被获取，那么将获取许可证；否则将会阻塞，该方法不支持重入，多次调用会导致阻塞，许可证默认状态是已被获取)，unpark释放许可证(该方法可多次调用，不会影响许可证的获取)</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程池---jdk自带的有哪几种线程池>线程池 - JDK自带的有哪几种线程池</h2><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程池---线程池的参数有哪些各自作用是什么>线程池 - 线程池的参数有哪些，各自作用是什么</h2><h2 id=线程池---如何设计一个线程池>线程池 - 如何设计一个线程池</h2><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=线程池的execute和submit的区别与联系>线程池的execute和submit的区别与联系</h2><span class=spoiler>* 任务类型 ：execute只能提交Runnable类型的任务，而submit既能提交Runnable类型任务也能提交Callable类型任务
+* park()、unpark() : 使用LockSupport提供的park获取许可证(如果许可证的状态是未被获取，那么将获取许可证；否则将会阻塞，该方法不支持重入，多次调用会导致阻塞，许可证默认状态是已被获取)，unpark释放许可证(该方法可多次调用，不会影响许可证的获取)</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程池 - JDK自带的有哪几种线程池
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程池 - 线程池的参数有哪些，各自作用是什么
+## 线程池 - 如何设计一个线程池
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程池的execute和submit的区别与联系
+<span class=spoiler>* 任务类型 ：execute只能提交Runnable类型的任务，而submit既能提交Runnable类型任务也能提交Callable类型任务
 * 异常 ： execute直接抛出异常，submit会吃掉异常，可用future的get捕获
-* 顶层接口 ：execute所属顶层接口是Executor,submit所属顶层接口是ExecutorService</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---java的线程模型>理论 - Java的线程模型</h2><span class=spoiler>线程又分为用户线程和内核线程。
+* 顶层接口 ：execute所属顶层接口是Executor,submit所属顶层接口是ExecutorService</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - Java的线程模型
+<span class=spoiler>线程又分为用户线程和内核线程。
 * 用户线程：语言层面创建的线程，比如 java语言中多线程技术，通过语言提供的线程库来创建、销毁线程。
 * 内核线程：内核线程又称为守护线程 Daemon线程，用户线程的运行必须依赖内核线程，通过内核线程调度器来分配到相应的处理器上。
-Java的线程模型采用的是一对一，即一个内核线程对应一个用户线程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=实战---linux-环境下如何查找哪个线程使用-cpu-最长>实战 - Linux 环境下如何查找哪个线程使用 CPU 最长</h2><span class=spoiler>（1）获取项目的pid，jps或者ps -ef | grep java
+Java的线程模型采用的是一对一，即一个内核线程对应一个用户线程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 实战 - Linux 环境下如何查找哪个线程使用 CPU 最长
+<span class=spoiler>（1）获取项目的pid，jps或者ps -ef | grep java
 （2）top -H -p pid，顺序不能改变
-这样可以打印出当前的项目进程，每条线程占用CPU时间的百分比</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=并发篇>并发篇</h1><h2 id=理论---并发与并行的区别>理论 - 并发与并行的区别</h2><span class=spoiler>* 并发 ： 同**一个时间段内**多个任务都在执行
-* 并行 ： 在**单位时间内**多个任务都在执行</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---主内存和工作内存各自存储什么>理论 - 主内存和工作内存各自存储什么</h2><span class=spoiler>* 主内存 —— 即*main memory*。在java中，实例域、静态域和数组元素是线程之间共享的数据，它们存储在**主内存**中。
-* 本地内存 —— 即*local memory*。 局部变量，方法定义参数 和 异常处理器参数是不会在线程之间共享的，它们存储在线程的**本地内存**中。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---并发编程三要素>理论 - 并发编程三要素</h2><span class=spoiler>* 原子性 ：不可分割，一个或多个操作要么全部执行成功要么全部执行失败。它们不会被线程打断
+这样可以打印出当前的项目进程，每条线程占用CPU时间的百分比</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 并发篇
+## 理论 - 并发与并行的区别
+<span class=spoiler>* 并发 ： 同**一个时间段内**多个任务都在执行
+* 并行 ： 在**单位时间内**多个任务都在执行</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 主内存和工作内存各自存储什么
+<span class=spoiler>* 主内存 —— 即*main memory*。在java中，实例域、静态域和数组元素是线程之间共享的数据，它们存储在**主内存**中。
+* 本地内存 —— 即*local memory*。 局部变量，方法定义参数 和 异常处理器参数是不会在线程之间共享的，它们存储在线程的**本地内存**中。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 并发编程三要素
+<span class=spoiler>* 原子性 ：不可分割，一个或多个操作要么全部执行成功要么全部执行失败。它们不会被线程打断
 * 有序性 ：程序执行的顺序按照代码的先后顺序执行
-* 可见性 ：一个线程对共享变量的修改,另一个线程能够立刻看到</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---为什么会产生原子性问题>理论 - 为什么会产生原子性问题</h2><span class=spoiler>对于 64 位的数据，如 long 和 double，允许虚拟机实现选择可以不保证 64 位数据类型的 load、store、read 和 write 这四个操作的原子性，即如果有多个线程共享一个并未声明为 volatile 的 long 或 double 类型的变量，并且同时对它们进行读取和修改操作，那么某些线程可能会读取到一个既非原值，也不是其他线程修改值的代表了“半个变量”的数值</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---为什么会产生有序性问题>理论 - 为什么会产生有序性问题</h2><span class=spoiler>“编译器和处理器”为了提高性能，在程序执行时会对程序进行重排序，这打破了有序性</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---为什么会产生可见性问题>理论 - 为什么会产生可见性问题</h2><span class=spoiler>* 线程对变量的所有操作都必须在工作内存中进行，而不能直接读写主内存中的变量。
+* 可见性 ：一个线程对共享变量的修改,另一个线程能够立刻看到</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 为什么会产生原子性问题
+<span class=spoiler>对于 64 位的数据，如 long 和 double，允许虚拟机实现选择可以不保证 64 位数据类型的 load、store、read 和 write 这四个操作的原子性，即如果有多个线程共享一个并未声明为 volatile 的 long 或 double 类型的变量，并且同时对它们进行读取和修改操作，那么某些线程可能会读取到一个既非原值，也不是其他线程修改值的代表了“半个变量”的数值</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 为什么会产生有序性问题
+<span class=spoiler>“编译器和处理器”为了提高性能，在程序执行时会对程序进行重排序，这打破了有序性</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 为什么会产生可见性问题
+<span class=spoiler>* 线程对变量的所有操作都必须在工作内存中进行，而不能直接读写主内存中的变量。
 * 线程之间无法直接访问对方的工作内存中的变量，线程间变量的传递均需要通过主内存来完成。
-* 简言之，只要直接采用了多线程的并发模型，并采用共享内存的方式作为数据的通讯方式，就一定有可见性问题</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---什么是上下文切换>理论 - 什么是上下文切换</h2><span class=spoiler>* 含义 ：CPU从一个进程或线程切换到另一个进程或线程
+* 简言之，只要直接采用了多线程的并发模型，并采用共享内存的方式作为数据的通讯方式，就一定有可见性问题</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 什么是上下文切换
+<span class=spoiler>* 含义 ：CPU从一个进程或线程切换到另一个进程或线程
 * 内容 ：上下文是指某一时间点 CPU 寄存器和程序计数器的内容
 * 切换种类 ：
 * 线程切换 : 同一进程中的两个线程之间的切换
 * 进程切换 : 两个进程之间的切换
 * 模式切换 : 在给定线程中，用户模式和内核模式的切换
-* 地址空间切换 : 将虚拟内存切换到物理内存</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---概述进程切换的步骤>理论 - 概述进程切换的步骤</h2><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---概述线程切换的步骤>理论 - 概述线程切换的步骤</h2><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---线程切换的原因有哪些>理论 - 线程切换的原因有哪些</h2><span class=spoiler>引起线程上下文切换的原因，主要存在三种情况如下：
+* 地址空间切换 : 将虚拟内存切换到物理内存</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 概述进程切换的步骤
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 概述线程切换的步骤
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 线程切换的原因有哪些
+<span class=spoiler>引起线程上下文切换的原因，主要存在三种情况如下：
 > 1. **中断处理**：在中断处理中，其他程序”打断”了当前正在运行的程序。当CPU接收到中断请求时，会在正在运行的程序和发起中断请求的程序之间进行一次上下文切换。**中断分为硬件中断和软件中断**，软件中断包括因为IO阻塞、未抢到资源或者用户代码等原因，线程被挂起。
 > 2. **多任务处理**：在多任务处理中，CPU会在不同程序之间来回切换，每个程序都有相应的处理时间片，CPU在两个时间片的间隔中进行上下文切换。
 > 3. **用户态切换**：对于一些操作系统，当进行用户态切换时也会进行一次上下文切换，虽然这不是必须的。
@@ -72,11 +123,14 @@ Java的线程模型采用的是一对一，即一个内核线程对应一个用�
 > 2. 当前执行任务碰到IO阻塞，调度器将此任务挂起，继续下一任务；
 > 3. 多个任务抢占锁资源，当前任务没有抢到锁资源，被调度器挂起，继续下一任务；
 > 4. 用户代码挂起当前任务，让出CPU时间；
-> 5. 硬件中断；</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---上下文切换有哪些损耗>理论 - 上下文切换有哪些损耗</h2><span class=spoiler>1. **直接消耗**：指的是CPU寄存器需要保存和加载, 系统调度器的代码需要执行, TLB实例需要重新加载, CPU 的pipeline需要刷掉；
-2. **间接消耗**：指的是多核的cache之间得共享数据, 间接消耗对于程序的影响要看线程工作区操作数据的大小</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=如何减少线程的上下文切换>如何减少线程的上下文切换</h2><span class=spoiler>* 无锁并发**：多线程竞争时，会引起上下文切换，所以多线程处理数据时，可以用一些办法来避免使用锁，如将数据的ID按照Hash取模分段，不同的线程处理不同段的数据；
+> 5. 硬件中断；</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 上下文切换有哪些损耗
+<span class=spoiler>1. **直接消耗**：指的是CPU寄存器需要保存和加载, 系统调度器的代码需要执行, TLB实例需要重新加载, CPU 的pipeline需要刷掉；
+2. **间接消耗**：指的是多核的cache之间得共享数据, 间接消耗对于程序的影响要看线程工作区操作数据的大小</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 如何减少线程的上下文切换
+<span class=spoiler>* 无锁并发**：多线程竞争时，会引起上下文切换，所以多线程处理数据时，可以用一些办法来避免使用锁，如将数据的ID按照Hash取模分段，不同的线程处理不同段的数据；
 * CAS算法**：Java的Atomic包使用CAS算法来更新数据，而不需要加锁；
 * 最少线程**：避免创建不需要的线程，比如任务很少，但是创建了很多线程来处理，这样会造成大量线程都处于等待状态；
-* 使用协程**：在单线程里实现多任务的调度，并在单线程里维持多个任务间的切换(Java没有协程，线程模型限制所致)</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---什么是happens-before原则>理论 - 什么是happens-before原则</h2><span class=spoiler>在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这2个操作之间必须要存在happens-before关系。
+* 使用协程**：在单线程里实现多任务的调度，并在单线程里维持多个任务间的切换(Java没有协程，线程模型限制所致)</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 什么是happens-before原则
+<span class=spoiler>在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这2个操作之间必须要存在happens-before关系。
 - 定义: 如果一个操作在另一个操作之前发生(happens-before),那么第一个操作的执行结果将对第二个操作可见, 而且第一个操作的执行顺序排在第二个操作之前。
 - 两个操作之间存在happens-before关系，并不意味着一定要按照happens-before原则制定的顺序来执行。如果重排序之后的执行结果与按照happens-before关系来执行的结果一致，那么这种重排序并不非法。
 - happens-before规则：
@@ -87,27 +141,33 @@ Java的线程模型采用的是一对一，即一个内核线程对应一个用�
 5. 线程启动规则：在主线程A执行过程中，启动子线程B，那么线程A在启动子线程B之前对共享变量的修改结果对线程B可见
 6. 线程终止规则：在主线程A执行过程中，子线程B终止，那么线程B在终止之前对共享变量的修改结果在线程A中可见。
 7. 线程中断规则：对线程interrupt()方法的调用先行发生于被中断线程代码检测到中断事件的发生，可以通过Thread.interrupted()检测到是否发生中断
-8. 对象终结规则：这个也简单的，就是一个对象的初始化的完成，也就是构造函数执行的结束一定 happens-before它的finalize()方法。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---什么是as-if-serial语义>理论 - 什么是as-if-serial语义</h2><span class=spoiler>不管怎么重排序(编译器和处理器为了提高并行度做的优化),(单线程)程序的执行结果不会改变
+8. 对象终结规则：这个也简单的，就是一个对象的初始化的完成，也就是构造函数执行的结束一定 happens-before它的finalize()方法。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 什么是as-if-serial语义
+<span class=spoiler>不管怎么重排序(编译器和处理器为了提高并行度做的优化),(单线程)程序的执行结果不会改变
 - 有序性规则表现在以下两种场景: 线程内和线程间
 1. 线程内: 指令会按照一种“串行”(as-if-serial)的方式执行，此种方式已经应用于顺序编程语言。
 2. 线程间: 一个线程“观察”到其他线程并发地执行非同步的代码时，任何代码都有可能交叉执行。唯一起作用的约束是：对于同步方法，同步块以及volatile字段的操作仍维持相对有序。
 - As-if-serial只是保障单线程不会出问题，所以有序性保障，可以理解为把As-if-serial扩展到多线程，那么在多线程中也不会出现问题
 - 从底层的角度来看，是借助于处理器提供的相关指令内存屏障来实现的
-- 对于Java语言本身来说，Java已经帮我们与底层打交道，我们不会直接接触内存屏障指令，java提供的关键字synchronized和volatile，可以达到这个效果，保障有序性（借助于显式锁Lock也是一样的，Lock逻辑与synchronized一致）</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---jmm有哪八个原子操作指令>理论 - JMM有哪八个原子操作指令</h2><span class=spoiler>* **read** 读取：作用于主内存，将共享变量从主内存传动到线程的工作内存中，供后面的 load 动作使用。
+- 对于Java语言本身来说，Java已经帮我们与底层打交道，我们不会直接接触内存屏障指令，java提供的关键字synchronized和volatile，可以达到这个效果，保障有序性（借助于显式锁Lock也是一样的，Lock逻辑与synchronized一致）</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - JMM有哪八个原子操作指令
+<span class=spoiler>* **read** 读取：作用于主内存，将共享变量从主内存传动到线程的工作内存中，供后面的 load 动作使用。
 * **load** 载入：作用于工作内存，把 read 读取的值放到工作内存中的副本变量中。
 * **store** 存储：作用于工作内存，把工作内存中的变量传送到主内存中，为随后的 write 操作使用。
 * **write** 写入：作用于主内存，把 store 传送值写到主内存的变量中。
 * **use** 使用：作用于工作内存，把工作内存的值传递给执行引擎，当虚拟机遇到一个需要使用这个变量的指令，就会执行这个动作。
 * **assign** 赋值：作用于工作内存，把执行引擎获取到的值赋值给工作内存中的变量，当虚拟机栈遇到给变量赋值的指令，执行该操作。比如 `int i = 1;`
 * **lock（锁定）** 作用于主内存，把变量标记为线程独占状态。
-* **unlock（解锁）** 作用于主内存，它将释放独占状态</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p><img src=https://gitee.com/1162492411/pic/raw/master/Java-JMM-jmm%E5%85%AB%E7%A7%8D%E6%8C%87%E4%BB%A4.png alt=jmm八种指令></p><h2 id=理论---如何实现可见性>理论 - 如何实现可见性</h2><span class=spoiler>- 通过**volatile关键字**标记内存屏障保证可见性。
+* **unlock（解锁）** 作用于主内存，它将释放独占状态</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>![jmm八种指令](https://gitee.com/1162492411/pic/raw/master/Java-JMM-jmm八种指令.png)
+## 理论 - 如何实现可见性
+<span class=spoiler>- 通过**volatile关键字**标记内存屏障保证可见性。
 - 通过**synchronized关键字**定义同步代码块或者同步方法保障可见性。
 - 通过**Lock接口**保障可见性。
-- 通过**Atomic类型**保障可见性。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---为了实现可见性volatile和synchronized所使用的方法有何不同>理论 - 为了实现可见性，volatile和synchronized所使用的方法有何不同</h2><span class=spoiler>volatile通过内存屏障来实现，而synchronized通过系统内核互斥实现，相当于JMM中的lock、unlock，退出代码块时刷新变量到主内存</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---volatilesynchronizedlockatomic对原子性一致性有序性的保障情况>理论 - volatile、synchronized、Lock、Atomic对原子性、一致性、有序性的保障情况</h2><span class=spoiler>| 特性 | volatile关键字 | synchronized关键字 | Lock接口 | Atomic变量 |
+- 通过**Atomic类型**保障可见性。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 为了实现可见性，volatile和synchronized所使用的方法有何不同
+<span class=spoiler>volatile通过内存屏障来实现，而synchronized通过系统内核互斥实现，相当于JMM中的lock、unlock，退出代码块时刷新变量到主内存</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - volatile、synchronized、Lock、Atomic对原子性、一致性、有序性的保障情况
+<span class=spoiler>| 特性 | volatile关键字 | synchronized关键字 | Lock接口 | Atomic变量 |
 | ------ | -------------- | ------------------ | -------- | ---------- |
 | 原子性 | 无法保障 | 可以保障 | 可以保障 | 可以保障 |
 | 可见性 | 可以保障 | 可以保障 | 可以保障 | 可以保障 |
-| 有序性 | 一定程度保障 | 可以保障 | 可以保障 | 无法保障 |</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>实现可见性的方法有哪些？
+| 有序性 | 一定程度保障 | 可以保障 | 可以保障 | 无法保障 |</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>实现可见性的方法有哪些？
 常用的并发工具类有哪些？
 CyclicBarrier 和 CountDownLatch 的区别
 synchronized 的作用？
@@ -131,16 +191,21 @@ ConcurrentHashMap 的并发度是什么？
 Java 中用到的线程调度算法是什么？
 什么是线程调度器(Thread Scheduler)和时间分片(TimeSlicing)？
 什么是自旋？
-Java Concurrency API 中的 Lock 接口(Lock interface)是什么？对比同步它有什么优势？</p><p>ConcurrentHashMap为什么比HashMap安全又高效
-<span class=spoiler>jdk7分段锁，jdk8cas</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style></p><h2 id=理论---volatile关键字的作用>理论 - volatile关键字的作用</h2><span class=spoiler>1.保证线程间的可见性
-2.禁止CPU进行指令重排</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---简述volatile的内存语义>理论 - 简述volatile的内存语义</h2><span class=spoiler>* volatile****写**：当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存。
-* volatile****读**：当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---jmm如何实现volatile的禁止指令重排>理论 - JMM如何实现volatile的禁止指令重排</h2><span class=spoiler>首先要讲一下内存屏障，内存屏障可以分为以下几类：
+Java Concurrency API 中的 Lock 接口(Lock interface)是什么？对比同步它有什么优势？
+ConcurrentHashMap为什么比HashMap安全又高效
+<span class=spoiler>jdk7分段锁，jdk8cas</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - volatile关键字的作用
+<span class=spoiler>1.保证线程间的可见性
+2.禁止CPU进行指令重排</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 简述volatile的内存语义
+<span class=spoiler>* volatile****写**：当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存。
+* volatile****读**：当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - JMM如何实现volatile的禁止指令重排
+<span class=spoiler>首先要讲一下内存屏障，内存屏障可以分为以下几类：
 - LoadLoad 屏障：对于这样的语句Load1，LoadLoad，Load2。在Load2及后续读取操作要读取的数据被访问前，保证Load1要读取的数据被读取完毕。
 - StoreStore屏障：对于这样的语句Store1， StoreStore， Store2，在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
 - LoadStore 屏障：对于这样的语句Load1， LoadStore，Store2，在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 - StoreLoad 屏障：对于这样的语句Store1， StoreLoad，Load2，在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。
 在每个volatile读操作后插入LoadLoad屏障，在读操作后插入LoadStore屏障
-在每个volatile写操作的前面插入一个StoreStore屏障，后面插入一个SotreLoad屏障。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---什么是mesi>理论 - 什么是MESI</h2><span class=spoiler>​ 在多核CPU中某核发生修改，可能产生数据不一致，一致性协议正是为了保证多个CPU cache之间的缓存共享数据的一致性。其中MESI对应modify(修改)、exclusive(独占)、shared(共享)、invalid（失效）。
+在每个volatile写操作的前面插入一个StoreStore屏障，后面插入一个SotreLoad屏障。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 什么是MESI
+<span class=spoiler>​ 在多核CPU中某核发生修改，可能产生数据不一致，一致性协议正是为了保证多个CPU cache之间的缓存共享数据的一致性。其中MESI对应modify(修改)、exclusive(独占)、shared(共享)、invalid（失效）。
 | 状态 | 描述 |
 | ------------ | ------------------------------------------------------------ |
 | M(modify) | 该缓存行中的内容被修改了，并且该缓存行只缓存在该CPU中,而且和主存数据不一致 |
@@ -155,20 +220,29 @@ Java Concurrency API 中的 Lock 接口(Lock interface)是什么？对比同步�
 1、CPU异步完成写内存产生的延时是可以接受的，而且延迟很短，只有在多线程环境下需要严格保证内存可见等极少数特殊情况下才需要保证CPU的写在外界看来是同步完成的。
 2、编译器和CPU可以保证输出结果一样的情况下对指令重排序。插入内存屏障，相当于告诉CPU和编译器先于这个命令的先执行，后于的命令必须后执行。
 3、使用Lock前缀指令，会使多核心CPU互斥使用这个内存地址。当指令执行完，这个锁定动作也消失。
-```</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=理论---有了mesi为什么还要有volatile>理论 - 有了MESI为什么还要有volatile</h2><span class=spoiler>CPU的MESI能够保证缓存一致性，但是不能保证一个线程对变量修改后其他线程立即可见。
+```</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 有了MESI为什么还要有volatile
+<span class=spoiler>CPU的MESI能够保证缓存一致性，但是不能保证一个线程对变量修改后其他线程立即可见。
 想象下：一个CPU0中的变量所在的cache line已经是invalid，但是在CPU1中缓存的该变量最新值还没有刷新到内存中。那么CPU0需要使用该变量，会从主存中读取到旧的值。
-使用volatile可以保证可见性，该CPU该volatile修饰的变量的写操作立即同步到主存。而且volatile内存屏障的作用，也会将之前的发生的数据更新刷新到内存中。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=简述final的特性>简述final的特性</h2><span class=spoiler>对于**基本类型**的final域，编译器和处理器要遵守两个重排序规则：
+使用volatile可以保证可见性，该CPU该volatile修饰的变量的写操作立即同步到主存。而且volatile内存屏障的作用，也会将之前的发生的数据更新刷新到内存中。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 简述final的特性
+<span class=spoiler>对于**基本类型**的final域，编译器和处理器要遵守两个重排序规则：
 (01) final写：“构造函数内对一个final域的写入”，与“随后把这个被构造对象的引用赋值给一个引用变量”，这两个操作之间不能重排序。
 (02) final读：“初次读一个包含final域的对象的引用”，与“随后初次读对象的final域”，这两个操作之间不能重排序。
 对于**引用类型**的final域，除上面两条之外，还有一条规则：
 (03) final写：在“构造函数内对一个final引用的对象的成员域的写入”，与“随后在构造函数外把这个被构造对象的引用赋值给一个引用变量”，这两个操作之间不能重排序。
 注意：
-写final域的重排序规则可以确保：在引用变量为任意线程可见之前，该引用变量指向的对象的final域已经在构造函数中被正确初始化过了。其实要得到这个效果，还需要一个保证：在构造函数内部，不能让这个被构造对象的引用为其他线程可见，也就是对象引用不能在构造函数中“逸出”。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=实践---jmm如何实现final的特性>实践 - JMM如何实现final的特性</h2><span class=spoiler>通过“内存屏障”实现。
-在final域的写之后，构造函数return之前，插入一个StoreStore障屏。在读final域的操作前面插入一个LoadLoad屏障。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=锁篇>锁篇</h1><h2 id=可重入锁是什么synchronized是不是可重入锁如果是那么它是如何实现的>可重入锁是什么，synchronized是不是可重入锁，如果是，那么它是如何实现的</h2><span class=spoiler>1.允许一个线程二次请求自己持有对象锁的临界资源，
+写final域的重排序规则可以确保：在引用变量为任意线程可见之前，该引用变量指向的对象的final域已经在构造函数中被正确初始化过了。其实要得到这个效果，还需要一个保证：在构造函数内部，不能让这个被构造对象的引用为其他线程可见，也就是对象引用不能在构造函数中“逸出”。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 实践 - JMM如何实现final的特性
+<span class=spoiler>通过“内存屏障”实现。
+在final域的写之后，构造函数return之前，插入一个StoreStore障屏。在读final域的操作前面插入一个LoadLoad屏障。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 锁篇
+## 可重入锁是什么，synchronized是不是可重入锁，如果是，那么它是如何实现的
+<span class=spoiler>1.允许一个线程二次请求自己持有对象锁的临界资源，
 2.synchronized是可重入锁
-3.synchronized 锁对象有个计数器，会随着线程获 取锁后 +1 计数，当线程执行完毕后 -1，直到清零释放锁</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=公平锁和非公平锁的区别为什么公平锁效率低于非公平锁>公平锁和非公平锁的区别，为什么公平锁效率低于非公平锁</h2><h2 id=同步队列器aqs思想以及基于aqs实现的lock>同步队列器AQS思想，以及基于AQS实现的lock</h2><h2 id=偏向锁轻量级锁重量级锁三者各自的应用场景>偏向锁、轻量级锁、重量级锁三者各自的应用场景</h2><span class=spoiler>偏向锁：只有一个线程进入临界区；
+3.synchronized 锁对象有个计数器，会随着线程获 取锁后 +1 计数，当线程执行完毕后 -1，直到清零释放锁</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 公平锁和非公平锁的区别，为什么公平锁效率低于非公平锁
+## 同步队列器AQS思想，以及基于AQS实现的lock
+## 偏向锁、轻量级锁、重量级锁三者各自的应用场景
+<span class=spoiler>偏向锁：只有一个线程进入临界区；
 轻量级锁：多个线程交替进入临界区；
-重量级锁：多个线程同时进入临界区</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=java中对锁有哪些优化>Java中对锁有哪些优化</h2><span class=spoiler>1. 减少锁持有时间
+重量级锁：多个线程同时进入临界区</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## Java中对锁有哪些优化
+<span class=spoiler>1. 减少锁持有时间
 - 不需要同步执行的代码，能不放在同步快里面执行就不要放在同步快内，可以让锁尽快释放；
 2. 减少锁的粒度
 - 它的思想是将物理上的一个锁，拆成逻辑上的多个锁，增加并行度，从而降低锁竞争。它的思想也是用空间来换时间；
@@ -190,16 +264,30 @@ Java Concurrency API 中的 Lock 接口(Lock interface)是什么？对比同步�
 (如CAS)
 - 如果需要同步的操作执行速度非常快，并且线程竞争并不激烈，这时候使用CAS效率会更高，因为加锁会导致线程的上下文切换，如果上下文切换的耗时比同步操作本身更耗时，且线程对资源的竞争不激烈，使用volatiled+CAS操作会是非常高效的选择；
 7. 消除缓存行的伪共享
-- 除了我们在代码中使用的同步锁和jvm自己内置的同步锁外，还有一种隐藏的锁就是缓存行，它也被称为性能杀手。在多核cup的处理器中，每个cup都有自己独占的一级缓存、二级缓存，甚至还有一个共享的三级缓存，为了提高性能，cpu读写数据是以缓存行为最小单元读写的；32位的cpu缓存行为32字节，64位cup的缓存行为64字节，这就导致了一些问题。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=死锁的条件有哪些>死锁的条件有哪些</h2><span class=spoiler>* 互斥条件(Mutual exclusion) ：资源不能被共享，只能由一个进程使用。
+- 除了我们在代码中使用的同步锁和jvm自己内置的同步锁外，还有一种隐藏的锁就是缓存行，它也被称为性能杀手。在多核cup的处理器中，每个cup都有自己独占的一级缓存、二级缓存，甚至还有一个共享的三级缓存，为了提高性能，cpu读写数据是以缓存行为最小单元读写的；32位的cpu缓存行为32字节，64位cup的缓存行为64字节，这就导致了一些问题。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 死锁的条件有哪些
+<span class=spoiler>* 互斥条件(Mutual exclusion) ：资源不能被共享，只能由一个进程使用。
 * 请求与保持条件(Hold and wait)：进程已获得了一些资源，但因请求其它资源被阻塞时，对已获得的资源保持不放。
 * 不可抢占条件(No pre-emption) ：有些系统资源是不可抢占的，当某个进程已获得这种资源后，系统不能强行收回，只能由进程使用完时自己释放。
-* 循环等待条件(Circular wait) ：若干个进程形成环形链，每个都占用对方申请的下一个资源</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=死锁产生的原因>死锁产生的原因</h2><span class=spoiler>* 系统资源的竞争
-* 进程推进的顺序不当</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h2 id=处理死锁的策略有哪些>处理死锁的策略有哪些</h2><span class=spoiler>(1) 死锁预防：破坏导致死锁必要条件中的任意一个就可以预防死锁。例如，要求用户申请资源时一次性申请所需要的全部资源，这就破坏了保持和等待条件；将资源分层，得到上一层资源后，才能够申请下一层资源，它破坏了环路等待条件。预防通常会降低系统的效率。
+* 循环等待条件(Circular wait) ：若干个进程形成环形链，每个都占用对方申请的下一个资源</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 死锁产生的原因
+<span class=spoiler>* 系统资源的竞争
+* 进程推进的顺序不当</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 处理死锁的策略有哪些
+<span class=spoiler>(1) 死锁预防：破坏导致死锁必要条件中的任意一个就可以预防死锁。例如，要求用户申请资源时一次性申请所需要的全部资源，这就破坏了保持和等待条件；将资源分层，得到上一层资源后，才能够申请下一层资源，它破坏了环路等待条件。预防通常会降低系统的效率。
 (2) 死锁避免：避免是指进程在每次申请资源时判断这些操作是否安全，例如，使用银行家算法（如果申请资源会导致死锁，那么拒绝申请；如果申请不会导致死锁，那么允许申请）。死锁避免算法的执行会增加系统的开销。
 (3) 死锁检测：死锁预防和避免都是事前措施，而死锁的检测则是判断系统是否处于死锁状态，如果是，则执行死锁解除策略。
-(4) 死锁解除：这是与死锁检测结合使用的，它使用的方式就是剥夺。即将某进程所拥有的资源强行收回，分配给其他的进程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=jvm篇>JVM篇</h1><p>JVM分为哪几块，其中哪几块是线程共享的，每一块存储什么</p><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>内存溢出和内存泄露的区别</p><span class=spoiler>* 内存溢出 out of memory，是指**程序在申请内存时，没有足够的内存空间供其使用**，出现out of memory；
-* 内存泄露 memory leak，是指**程序在申请内存后，无法释放已申请的内存空间**，一次内存泄露危害可以忽略，但内存泄露堆积后果很严重，无论多少内存，迟早会被占光。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>如何判断哪些对象需要被GC</p><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>GC的方法</p><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>MinGC与FullGC各自指什么</p><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>HotSpot的GC算法以及7种垃圾回收期</p><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>类加载的过程</p><span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><p>对象的访问定位方式</p><span class=spoiler>* 使用句柄
-* 直接指针</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=设计模式篇>设计模式篇</h1><p>简要介绍各设计模式中的关键点</p><span class=spoiler>单例模式：某个类只能有一个实例，提供一个全局的访问点。
+(4) 死锁解除：这是与死锁检测结合使用的，它使用的方式就是剥夺。即将某进程所拥有的资源强行收回，分配给其他的进程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># JVM篇
+JVM分为哪几块，其中哪几块是线程共享的，每一块存储什么
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>内存溢出和内存泄露的区别
+<span class=spoiler>* 内存溢出 out of memory，是指**程序在申请内存时，没有足够的内存空间供其使用**，出现out of memory；
+* 内存泄露 memory leak，是指**程序在申请内存后，无法释放已申请的内存空间**，一次内存泄露危害可以忽略，但内存泄露堆积后果很严重，无论多少内存，迟早会被占光。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>如何判断哪些对象需要被GC
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>GC的方法
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>MinGC与FullGC各自指什么
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>HotSpot的GC算法以及7种垃圾回收期
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>类加载的过程
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>对象的访问定位方式
+<span class=spoiler>* 使用句柄
+* 直接指针</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 设计模式篇
+简要介绍各设计模式中的关键点
+<span class=spoiler>单例模式：某个类只能有一个实例，提供一个全局的访问点。
 简单工厂：一个工厂类根据传入的参量决定创建出那一种产品类的实例。
 工厂方法：定义一个创建对象的接口，让子类决定实例化那个类。
 抽象工厂：创建相关或依赖对象的家族，而无需明确指定具体类。
@@ -222,7 +310,8 @@ Java Concurrency API 中的 Lock 接口(Lock interface)是什么？对比同步�
 命令模式：将命令请求封装为一个对象，使得可以用不同的请求来进行参数化。
 访问者模式：在不改变数据结构的前提下，增加作用于一组对象元素的新功能。
 责任链模式：将请求的发送者和接收者解耦，使的多个对象都有处理这个请求的机会。
-迭代器模式：一种遍历访问聚合对象中各个元素的方法，不暴露该对象的内部结构。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style><h1 id=实战排查>实战排查</h1><p>如何排查线上出现的JVM问题</p></div><footer class=post-footer><div class=post-tags><a href=https://www.zyg-tech.me/tags/%e9%9d%a2%e8%af%95%e9%a2%98 rel=tag title=面试题>#面试题#</a>
+迭代器模式：一种遍历访问聚合对象中各个元素的方法，不暴露该对象的内部结构。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 实战排查
+如何排查线上出现的JVM问题</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style></div><footer class=post-footer><div class=post-tags><a href=https://www.zyg-tech.me/tags/%e9%9d%a2%e8%af%95%e9%a2%98 rel=tag title=面试题>#面试题#</a>
 <a href=https://www.zyg-tech.me/tags/java rel=tag title=Java>#Java#</a>
 <a href=https://www.zyg-tech.me/tags/java%e5%9f%ba%e7%a1%80 rel=tag title=Java基础>#Java基础#</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zyg-tech.me/post/mybatis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/ rel=next title=MyBatis常见面试题><i class="fa fa-chevron-left"></i>MyBatis常见面试题</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zyg-tech.me/post/spring%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/ rel=prev title=Spring常见面试题>Spring常见面试题 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=https://www.zyg-tech.me/img/author.jpg alt=zyg><p class=site-author-name itemprop=name>zyg</p><p class="site-description motion-element" itemprop=description>Programmer & Architect</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=https://www.zyg-tech.me/post/><span class=site-state-item-count>18</span>
 <span class=site-state-item-name></span></a></div><div class="site-state-item site-state-categories"><a href=https://www.zyg-tech.me/categories/><span class=site-state-item-count>20</span>
