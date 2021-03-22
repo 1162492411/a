@@ -41,7 +41,12 @@
 * 改用ConcurrentHashMap</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># IO篇
 ## UNIX 系统有哪些常见的IO模型
 <span class=spoiler>UNIX 系统下， IO 模型一共有 5 种： **同步阻塞 I/O**、**同步非阻塞 I/O**、**I/O 多路复用**、**信号驱动 I/O** 和**异步 I/O**</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## Java中有哪些IO模型
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 线程篇
+<span class=spoiler>IO流程实际上包括两个阶段： `发起调用`与`实际IO`，发起调用指的是用户态发起系统调用，内核态进行数据的准备(网络 I/O 的情况就是等待远端数据陆续抵达；磁盘I/O的情况就是等待磁盘数据从磁盘上读取到内核态内存中)，实际IO指的是内核态将数据拷贝到用户态。
+阻塞/非阻塞指的是发起调用阶段，线程/调用者是否需要等待该阶段的完成，如果需要等待(阻塞)，那么在该阶段完成前一直等待，如果不需要等待(非阻塞)，在该阶段完成前调用者可以继续做其他事情；
+同步/非同步指的是实际IO阶段，线程/调用者是否需要自己参与（即线程是否需要询问IO操作完成），如果需要参与(同步)，那么线程需要不断轮询实际IO是否完成，如果不需要参与(非同步)，那么就是内核态完成实际IO后主动通知/回调线程
+BIO ： 同步阻塞
+NIO ： 同步非阻塞
+AIO/NIO2 ： 异步非阻塞</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 线程篇
 ## 线程 - 线程和进程的区别
 <span class=spoiler>进程是资源分配的最小单位，线程是CPU调度的最小单位</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 线程 - 进程和线程中各自存储什么内容
 <span class=spoiler>| 进程 | 线程 |
@@ -88,10 +93,7 @@ run() : run()就和普通的成员方法一样，可以被重复调用。单独�
 <span class=spoiler>线程又分为用户线程和内核线程。
 * 用户线程：语言层面创建的线程，比如 java语言中多线程技术，通过语言提供的线程库来创建、销毁线程。
 * 内核线程：内核线程又称为守护线程 Daemon线程，用户线程的运行必须依赖内核线程，通过内核线程调度器来分配到相应的处理器上。
-Java的线程模型采用的是一对一，即一个内核线程对应一个用户线程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 实战 - Linux 环境下如何查找哪个线程使用 CPU 最长
-<span class=spoiler>（1）获取项目的pid，jps或者ps -ef | grep java
-（2）top -H -p pid，顺序不能改变
-这样可以打印出当前的项目进程，每条线程占用CPU时间的百分比</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 并发篇
+Java的线程模型采用的是一对一，即一个内核线程对应一个用户线程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 并发篇
 ## 理论 - 并发与并行的区别
 <span class=spoiler>* 并发 ： 同**一个时间段内**多个任务都在执行
 * 并行 ： 在**单位时间内**多个任务都在执行</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 理论 - 主内存和工作内存各自存储什么
@@ -275,18 +277,64 @@ ConcurrentHashMap为什么比HashMap安全又高效
 (2) 死锁避免：避免是指进程在每次申请资源时判断这些操作是否安全，例如，使用银行家算法（如果申请资源会导致死锁，那么拒绝申请；如果申请不会导致死锁，那么允许申请）。死锁避免算法的执行会增加系统的开销。
 (3) 死锁检测：死锁预防和避免都是事前措施，而死锁的检测则是判断系统是否处于死锁状态，如果是，则执行死锁解除策略。
 (4) 死锁解除：这是与死锁检测结合使用的，它使用的方式就是剥夺。即将某进程所拥有的资源强行收回，分配给其他的进程。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># JVM篇
-JVM分为哪几块，其中哪几块是线程共享的，每一块存储什么
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>内存溢出和内存泄露的区别
+JVM的内存区域分为哪几块，其中哪几块是线程共享的，每一块存储什么
+![img](https://gitee.com/1162492411/pic/raw/master/Java-JVM内存结构.png)
+<span class=spoiler>* 堆 ： 存放实际对象，堆中一般分代，线程共享
+* 方法区 ： 存储虚拟机加载的类信息、常量、静态变量以及即时编译器编译后的代码等数据，永久代就是方法区的具体实现，线程共享
+* 常量池 ： 字符串常量池存放字面量，类常量池存放各种class，class被加载解析后的内容存放在运行时常量池
+* 程序计数器 ：主要存储字节码的行号指示器，控制程序的执行，线程不共享
+* 虚拟机栈 ：以栈帧为单位，每个栈帧对应一个被调用的Java方法，存放基本数据类型、对象引用、方法参数、操作数栈、方法出口等，线程不共享
+* 本地方法栈 ：与虚拟机栈类似，区别在于它对应的是native本地方法，线程不共享</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>内存溢出和内存泄露的区别
 <span class=spoiler>* 内存溢出 out of memory，是指**程序在申请内存时，没有足够的内存空间供其使用**，出现out of memory；
-* 内存泄露 memory leak，是指**程序在申请内存后，无法释放已申请的内存空间**，一次内存泄露危害可以忽略，但内存泄露堆积后果很严重，无论多少内存，迟早会被占光。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>如何判断哪些对象需要被GC
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>GC的方法
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>MinGC与FullGC各自指什么
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>HotSpot的GC算法以及7种垃圾回收期
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>类加载的过程
-<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>对象的访问定位方式
+* 内存泄露 memory leak，是指**程序在申请内存后，无法释放已申请的内存空间**，一次内存泄露危害可以忽略，但内存泄露堆积后果很严重，无论多少内存，迟早会被占光。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 如何判断哪些对象需要被GC
+<span class=spoiler>* 引用计数法 ： 引用计数为0的需要被回收
+* 可达性分析 ： 从GC Roots出发的不可达对象需要被回收</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 什么是GC Roots
+<span class=spoiler>* 方法区中的类静态属性引用的对象；
+* 方法区中常量引用的对象；
+* 虚拟机栈（栈帧中的本地变量表）中引用的对象；
+* 本地方法栈中JNI（即一般说的Native方法）中引用的对象</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 对象的访问定位方式
 <span class=spoiler>* 使用句柄
-* 直接指针</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 设计模式篇
-简要介绍各设计模式中的关键点
+* 直接指针</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 强引用、软引用、弱引用、虚引用是什么
+<span class=spoiler>* 强引用 ： 正常的对象引用
+* 软引用 ： 维护一些可有可无的对象。只有在内存不足时，系统则会回收软引用对象，如果回收了软引用对象之后仍然没有足够的内存，才会抛出内存溢出异常
+* 弱引用 ：比较软引用，要更加无用一些，它拥有更短的生命周期。当JVM进行垃圾回收时，无论内存是否充足，都会回收被弱引用关联的对象
+* 虚引用 ：形同虚设的引用，主要用来跟踪对象被垃圾回收的活动</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## GC的方法
+<span class=spoiler>* 标记-清除
+* 标记-整理
+* 复制</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 对象在哪些情况下会从新生代进入老年代
+<span class=spoiler>* 达到回收年龄，默认15
+* 动态对象年龄判断
+* 分配担保时新生代不够用会直接分配到老年代
+* 对象超出一定大小时直接分配到老年代</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 优化时调整过JVM的哪些参数
+<span class=spoiler>* **Xms** ： 初始堆内存大小
+* **Xmx** ：最大堆内存大小
+* **Xmn** ：年轻代大小
+* **Xss** ：每个线程的内存大小
+* **XX:NewRatio** ：设置新生代和老年代的比值
+* **XX:SurvivorRatio** ： 新生代中Eden区与两个Survivor区的比值
+* **XX:+UseG1GC** : 使用G1垃圾收集器
+* **XX:+PrintGC** ：统计垃圾回收信息</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 内存溢出是什么，有哪些原因，如何解决
+<span class=spoiler>* 定义 ： 分配的内存空间超过系统内存
+* 原因 ：
+* 使用了大量的递归或无限递归
+* 在循环内大量创建对象
+* 使用了大量的static修饰变量，或者用static修饰了过大的数据
+* 有数组，List，Map中存放的是大量对象的引用而不是对象
+* 没有重新equals()和hashCode()方法，从而导致向数组/List/Map中添加时导致重复添加</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 内存泄漏是什么，有哪些原因，如何解决
+<span class=spoiler>* 定义 ：系统分配的内存没有被回收
+* 原因 ：
+* 连接未关闭
+* finalize方法没有被执行从而导致jvm认为对象还无法被回收
+* ThreadLocal的错误使用，使用完之后未及时remove</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## MinorGC，MajorGC、FullGC都什么时候发生
+<span class=spoiler>MinorGC在年轻代空间不足的时候发生，MajorGC指的是老年代的GC，出现MajorGC一般经常伴有MinorGC。
+FullGC有三种情况。
+1. 当老年代无法再分配内存的时候
+2. 元空间不足的时候
+3. 显示调用System.gc的时候。另外，像CMS一类的垃圾回收器，在MinorGC出现promotion failure的时候也会发生FullGC</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 类加载的过程
+<span class=spoiler>加载、验证、准备、解析、初始化</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>MinGC与FullGC各自指什么
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>HotSpot的GC算法以及7种垃圾回收期
+<span class=spoiler></span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 设计模式篇
+## 简要介绍各设计模式中的关键点
 <span class=spoiler>单例模式：某个类只能有一个实例，提供一个全局的访问点。
 简单工厂：一个工厂类根据传入的参量决定创建出那一种产品类的实例。
 工厂方法：定义一个创建对象的接口，让子类决定实例化那个类。
@@ -311,11 +359,18 @@ JVM分为哪几块，其中哪几块是线程共享的，每一块存储什么
 访问者模式：在不改变数据结构的前提下，增加作用于一组对象元素的新功能。
 责任链模式：将请求的发送者和接收者解耦，使的多个对象都有处理这个请求的机会。
 迭代器模式：一种遍历访问聚合对象中各个元素的方法，不暴露该对象的内部结构。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style># 实战排查
-如何排查线上出现的JVM问题</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style></div><footer class=post-footer><div class=post-tags><a href=https://www.zyg-tech.me/tags/%e9%9d%a2%e8%af%95%e9%a2%98 rel=tag title=面试题>#面试题#</a>
+## 如何查找哪个线程使用 CPU 最长
+<span class=spoiler>（1）获取项目的pid，jps或者ps -ef | grep java
+（2）top -H -p pid，顺序不能改变
+这样可以打印出当前的项目进程，每条线程占用CPU时间的百分比</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 如何排查CPU问题过高
+<span class=spoiler>* top -H查看CPU使用最高的进程，将其转换为十六进制，例如pid为67136，转换为16进制的1065b
+* `jstack`命令获取应用的栈信息，搜索这个16进制 ，例如`jstack -l 67136|grep 1065b`,-l作用是查询锁信息</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>## 如何排查堆外内存
+<span class=spoiler>进程占用的内存，可以使用top命令，看RES段占用的值。如果这个值大大超出我们设定的最大堆内存，则证明堆外内存占用了很大的区域。
+使用gdb可以将物理内存dump下来，通常能看到里面的内容。更加复杂的分析可以使用perf工具，或者谷歌开源的gperftools。那些申请内存最多的native函数，很容易就可以找到。</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style>如何排查线上出现的JVM问题</span><style>.spoiler{color:#000;background-color:#000;white-space:pre-line}.spoiler:hover{color:#fff}</style></div><footer class=post-footer><div class=post-tags><a href=https://www.zyg-tech.me/tags/%e9%9d%a2%e8%af%95%e9%a2%98 rel=tag title=面试题>#面试题#</a>
 <a href=https://www.zyg-tech.me/tags/java rel=tag title=Java>#Java#</a>
-<a href=https://www.zyg-tech.me/tags/java%e5%9f%ba%e7%a1%80 rel=tag title=Java基础>#Java基础#</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zyg-tech.me/post/mybatis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/ rel=next title=MyBatis常见面试题><i class="fa fa-chevron-left"></i>MyBatis常见面试题</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zyg-tech.me/post/spring%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/ rel=prev title=Spring常见面试题>Spring常见面试题 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=https://www.zyg-tech.me/img/author.jpg alt=zyg><p class=site-author-name itemprop=name>zyg</p><p class="site-description motion-element" itemprop=description>Programmer & Architect</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=https://www.zyg-tech.me/post/><span class=site-state-item-count>18</span>
-<span class=site-state-item-name></span></a></div><div class="site-state-item site-state-categories"><a href=https://www.zyg-tech.me/categories/><span class=site-state-item-count>20</span>
-<span class=site-state-item-name></span></a></div><div class="site-state-item site-state-tags"><a href=https://www.zyg-tech.me/tags/><span class=site-state-item-count>33</span>
+<a href=https://www.zyg-tech.me/tags/java%e5%9f%ba%e7%a1%80 rel=tag title=Java基础>#Java基础#</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zyg-tech.me/post/mybatis%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/ rel=next title=MyBatis常见面试题><i class="fa fa-chevron-left"></i>MyBatis常见面试题</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zyg-tech.me/post/spring%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/ rel=prev title=Spring常见面试题>Spring常见面试题 <i class="fa fa-chevron-right"></i></a></div></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=https://www.zyg-tech.me/img/author.jpg alt=zyg><p class=site-author-name itemprop=name>zyg</p><p class="site-description motion-element" itemprop=description>Programmer & Architect</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=https://www.zyg-tech.me/post/><span class=site-state-item-count>19</span>
+<span class=site-state-item-name></span></a></div><div class="site-state-item site-state-categories"><a href=https://www.zyg-tech.me/categories/><span class=site-state-item-count>22</span>
+<span class=site-state-item-name></span></a></div><div class="site-state-item site-state-tags"><a href=https://www.zyg-tech.me/tags/><span class=site-state-item-count>35</span>
 <span class=site-state-item-name></span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/1162492411/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>GitHub</a></span>
 <span class=links-of-author-item><a href=https://www.zhihu.com/people/momo0528/ target=_blank title=知乎><i class="fa fa-fw fa-globe"></i>知乎</a></span></div><div class="links-of-blogroll motion-element inline"><script type=text/javascript src="//rf.revolvermaps.com/0/0/8.js?i=5b4f2ucxar6&m=0&s=220&c=ff0000&cr1=ffffff&f=arial&l=33&bv=35" async></script></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span itemprop=copyrightYear>&copy;
 2009 - 2021</span>
